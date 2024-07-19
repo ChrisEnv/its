@@ -23,8 +23,8 @@ source(here("scripts", "color.R"))
 
 Die Selbsteinschätzung der IT-Skills wird mithilfe des Quarto-Frameworks erstellt. Der Quellcode wird über GitHub bereitgestellt und anhand eines CI/CD-Prozess automatisch über GitHub-Pages als interaktives HTML-Dokument veröffentlicht:
 
-- [interaktives HTML-Dokument](https://christian-stankov.github.io/it-skills/)
-- [GitHub Repository](https://github.com)
+- [interaktives HTML-Dokument](https://chrisenv.github.io/its/)
+- [GitHub Repository](https://github.com/ChrisEnv/its)
 
 Eine Zusammenfassung ist durch @fig-skills gegeben.
 
