@@ -1588,6 +1588,11 @@
       ],
       "Hash": "8318e64ffb3a70e652494017ec455561"
     },
+    "webshot": {
+      "Package": "webshot",
+      "Version": "0.5.5",
+      "Source": "Repository"
+    },
     "withr": {
       "Package": "withr",
       "Version": "2.5.0",
