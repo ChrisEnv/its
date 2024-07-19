@@ -38,8 +38,9 @@ jobs:
       - name: Install renv
         run: R -e 'if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")'
 
-      - name: Install R Dependencies
-        run: R -e 'renv::restore()'
+      - name: Restore R Dependencies
+        run: |
+          R -e 'renv::restore(lockfile = "renv.lock")'
 
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
