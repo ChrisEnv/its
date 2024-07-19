@@ -27,6 +27,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libssl-dev libcurl4-openssl-dev libxml2-dev libv8-dev chromium-browser
 
+      - name: Install PhantomJS for webshot
+        run: |
+          sudo apt-get install -y libfontconfig1
+          sudo apt-get install -y phantomjs
+
       - name: Cache renv
         uses: actions/cache@v2
         with:
@@ -39,8 +44,7 @@ jobs:
         run: R -e 'if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")'
 
       - name: Restore R Dependencies
-        run: |
-          R -e 'renv::restore(lockfile = "renv.lock")'
+        run: R -e 'renv::restore(lockfile = "renv.lock")'
 
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
