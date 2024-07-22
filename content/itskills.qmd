@@ -111,30 +111,35 @@ skills <- tribble(
   "Projekt 6", "Quarto", 9,
   
   "Projekt 7", "R", 8,
-  "Projekt 7", "WebScraping", 6,
+  "Projekt 7", "WebScraping", 4,
   "Projekt 7", "SQL", 3,
   "Projekt 7", "Data Preprocessing", 6,
+  "Projekt 7", "Quarto", 9,
+  "Projekt 7", "Git", 5,
   
   "Projekt 8", "R", 8,
   "Projekt 8", "Reporting", 6,
   "Projekt 8", "Data Preprocessing", 7,
   "Projekt 8", "Data Analysis", 6,
   "Projekt 8", "Data Visualization", 6,
-  "Projekt 8", "Git", 5,
+  "Projekt 8", "Git", 6,
+  "Projekt 8", "Quarto", 6,
   
   "Projekt 9", "R", 8,
   "Projekt 9", "Data Preprocessing", 6,
   "Projekt 9", "Data Analysis", 6,
-  "Projekt 9", "Data Visualization", 6,
+  "Projekt 9", "Data Visualization", 7,
   "Projekt 9", "Reporting", 5,
-  "Projekt 9", "Git", 5,
+  "Projekt 9", "Git", 6,
+  "Projekt 9", "Quarto", 8,
   
   "Projekt 10", "R", 8,
   "Projekt 10", "Data Preprocessing", 6,
-  "Projekt 10", "Data Analysis", 6,
-  "Projekt 10", "Data Visualization", 6,
+  "Projekt 10", "Data Analysis", 7,
+  "Projekt 10", "Data Visualization", 7,
   "Projekt 10", "Reporting", 4,
-  "Projekt 10", "Git", 5,
+  "Projekt 10", "Git", 6,
+  "Projekt 10", "Quarto", 9,
 )
 
 # left join end date to skills tibble
@@ -201,7 +206,7 @@ fig <- fig %>%
 fig
 ```
 
-Die Selbsteinschätzung der IT-Skills zeigt, dass die Programmierkenntnisse in den Bereichen R, Data Preprocessing und Data Analysis am höchsten sind. Die Kenntnisse in Python, Git und SQL sind im mittleren Bereich. Die Kenntnisse in WebScraping, CI/CD und typst sind am niedrigsten.
+Als primäre Programmiersprache wird bisher die funktionale Programmiersprache R verwendet, erste Einblicke in Python wurden ebenfalls erlangt. Meine Fähigkeiten bündeln sich um die Datenaufbereitung, -analyse und -visualisierung. Mithilfe des [Quarto-Frameworks](https://quarto.org) setze ich Projekte um und dokumentiere diese.
 
 # Herangehensweise
 
@@ -261,7 +266,7 @@ fig
 ```
 :::
 
-Zur besseren Einordnung der Projekte und der verwendeten Skills wird in @fig-gantt ein Gantt-Diagramm erstellt.
+Zur zeitlichen Einordnung der Projekte und der verwendeten Skills wird in @fig-gantt ein Gantt-Diagramm erstellt.
 
 ```{r}
 #| fig-cap: Gantt-Diagramm der Projekte
@@ -307,9 +312,13 @@ fig <- fig %>%
 fig
 ```
 
+\FloatBarrier
+
 Anhand des Abschlussdatums der Projekte wird ein Recency-Faktor für die Skills berechnet. Der Recency-Faktor berücksichtigt die Abnahme der Kenntnisse über die Zeit. Der Faktor nimmt linear von 1 (Skill wurde in den letzten 365 Tagen angewendet) bis 0 (Skill wurde vor mehr als 10 Jahren angewendet) ab.
 
 ```{r}
+#| echo: true
+
 calc_recency_factor <- function(date){
   # calculate difference in days
   diff <- as.numeric(Sys.Date() - date)
