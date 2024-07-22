@@ -10,5 +10,4 @@ format:
     lang: de
   html:
     theme: cosmo
-    css: styles.scss
     echo: false

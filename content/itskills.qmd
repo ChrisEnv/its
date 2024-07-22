@@ -12,6 +12,7 @@ format:
         icon: github
     code-fold: true
     echo: true
+    css: styles.css
 ---
 
 ```{r}
