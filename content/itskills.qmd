@@ -180,7 +180,6 @@ skills_radar <- skills %>%
   group_by(Skill) %>%
   summarise(Score = max(RecencySkill), nproject = n())
 
-
 # Erstellen des Radardiagramms
 fig <- plot_ly(
   type = 'scatterpolar',
@@ -206,7 +205,13 @@ fig <- fig %>%
 fig
 ```
 
-Als primäre Programmiersprache wird bisher die funktionale Programmiersprache R verwendet, erste Einblicke in Python wurden ebenfalls erlangt. Meine Fähigkeiten bündeln sich um die Datenaufbereitung, -analyse und -visualisierung. Mithilfe des [Quarto-Frameworks](https://quarto.org) setze ich Projekte um und dokumentiere diese.
+Als primäre Programmiersprache verwende ich die funktionale Programmiersprache R. Während meines Studiums konnte ich umfangreiche Erfahrungen mit R sammeln, meine Fähigkeiten kontinuierlich ausbauen und in verschiedenen Modulen erfolgreich anwenden. Im Rahmen meiner Masterarbeit entwickelte und validierte ich eine Simulation für die Niedertemperatur-Destillation und Kristallisation zur Aufbereitung von Abwasserkonzentraten in R und R-Shiny. Die Validierung der Simulation erfolgte durch die Auswertung von Betriebsdaten einer Pilotanlage, was meine analytischen Fähigkeiten und meine Kompetenz im Umgang mit realen Daten weiter schärfte.
+
+Im beruflichen Umfeld konnte ich meine Expertise kontinuierlich erweitern und in verschiedenen Projekten anwenden. Mit dem Ziel, einen kohärenten Planungsprozess zwischen Systems Engineering, BIM (Building Information Modeling) und Data Science zu schaffen, entwickelte ich einen datengetriebenen Ansatz mithilfe des [Quarto-Frameworks](https://quarto.org).
+
+Durch die Anwendung einer zentral verwalteten und versionierten Berechnungsmethodik sowie der Verknüpfung dieser mit automatisierten Berichten konnte ich die Qualität erheblich verbessern. Dieser innovative Ansatz übertrifft die branchenüblichen Vorgehensweisen (Excel, Word, PowerPoint) deutlich und ermöglicht eine standardisierte, effiziente, nachvollziehbare und kollaborative Arbeitsweise.
+
+Durch die Anwendung dieses Frameworks konnte ich in verschiedenen Projekten umfassende Datenanalysen, -aufbereitungen und -visualisierungen durchführen sowie Berichte und Präsentationen erstellen. Diese Arbeit hat nicht nur die Qualität und Präzision der Ergebnisse verbessert, sondern auch die Zusammenarbeit und Kommunikation im Team erheblich erleichtert.
 
 # Herangehensweise
 
@@ -219,6 +224,10 @@ Für die Bestimmung der IT-Skills wurden die letzten `r nrow(projects)` Projekte
 #| label: fig-heatmap
 
 skills <- rename(skills, Level = Usage)
+
+# order projects by number of the Project name
+skills <- skills %>% 
+  mutate(Project = fct_inorder(Project))
 
 # Create heatmap with Plotly
 fig <- plot_ly(
