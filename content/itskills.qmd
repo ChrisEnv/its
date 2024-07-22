@@ -2,13 +2,23 @@
 title: Selbsteinschätzung der IT-Skills
 author: Christian Stankov
 lang: de
+date: today
 format: 
   memo-pdf: default
-  html: default
+  html:
+    other-links:
+      - text: GitHub Repository
+        href: https://github.com/ChrisEnv/its
+        icon: github
+    code-fold: true
+    echo: true
 ---
 
 ```{r}
-# Laden der benötigten Bibliotheken
+#| include: false
+#| echo: false
+
+# load libraries
 library(tidyverse)
 library(plotly)
 library(ggplot2)
@@ -17,37 +27,29 @@ library(here)
 ```
 
 ```{r}
+#| echo: false
+
 # source scripts
-source(here("scripts", "color.R"))
+source(here("scripts", "color.R")) # color palette
+source(here("scripts", "helper.R")) # helper functions - recency factor
 ```
 
-Die Selbsteinschätzung der IT-Skills wird mithilfe des Quarto-Frameworks erstellt. Der Quellcode wird über GitHub bereitgestellt und anhand eines CI/CD-Prozess automatisch über GitHub-Pages als interaktives HTML-Dokument veröffentlicht:
-
-- [interaktives HTML-Dokument](https://chrisenv.github.io/its/)
-- [GitHub Repository](https://github.com/ChrisEnv/its)
-
-Eine Zusammenfassung ist durch @fig-skills gegeben.
-
-
-# Bewertung der Programmierkenntnisse
-
-Die Bewertung der Programmierkenntnisse erfolgt anhand eines quantifizierbaren Ansatzes. Grundlage ist die Selbsteinschätzung der in Projekten angewandten Kenntnisse in verschiedenen Programmiersprachen, Frameworks und Tools. Die Bewertung erfolgt auf einer Skala von 1 bis 10, wobei 1 für Grundkenntnisse und 10 für Expertenkenntnisse steht. Relevante Projekte und die darin angewandten Kenntnisse sind in @fig-heatmap dargestellt.
-
 ```{r}
-# create tribble with project data
+#| echo: false
 
+# create tribble with project data
 projects <- tribble(
   ~Project, ~StartDate, ~EndDate,
-  "Awattar", "2018-10-01", "2019-01-31",
-  "ABM", "2019-10-01", "2020-03-31",
-  "HighCon", "2019-01-01", "2020-03-01",
-  "DataAnalytics", "2021-07-01", "2021-09-30",
-  "LTDis", "2022-01-01", "2022-09-30",
-  "Quarto", "2023-08-01", "today",
-  "TendeR", "2024-05-01", "today",
-  "Faulung", "2023-06-01", "2023-12-31",
-  "Trocknung", "2024-03-01", "2024-04-30",
-  "Benchmark", "2024-03-01", "today",
+  "Projekt 1", "2018-10-01", "2019-01-31",
+  "Projekt 2", "2019-10-01", "2020-03-31",
+  "Projekt 3", "2019-01-01", "2020-03-01",
+  "Projekt 4", "2021-07-01", "2021-09-30",
+  "Projekt 5", "2022-01-01", "2022-09-30",
+  "Projekt 6", "2023-08-01", "today",
+  "Projekt 7", "2024-05-01", "today",
+  "Projekt 8", "2023-06-01", "2023-12-31",
+  "Projekt 9", "2024-03-01", "2024-04-30",
+  "Projekt 10", "2024-03-01", "today",
 )
 
 # replace "today" with current date as character
@@ -56,135 +58,257 @@ projects$EndDate[projects$EndDate == "today"] <- Sys.Date() %>% as.character()
 # convert dates to Date objects
 projects <- projects %>%
   mutate(StartDate = ymd(StartDate), EndDate = ymd(EndDate))
-
-# Convert Project to factor with levels in the correct order
-projects$Project <- factor(projects$Project, levels = projects$Project)
 ```
 
 ```{r}
-# create tribble with skills for each project
+#| echo: false
+
+# create project skill data
 
 skills <- tribble(
   ~Project, ~Skill, ~Usage,
-  "Awattar", "R", 8,
-  "Awattar", "API", 7,
-  "Awattar", "R-Shiny", 7,
-  "Awattar", "Data Analysis", 7,
-  "Awattar", "Data Visualization", 7,
+  "Projekt 1", "R", 8,
+  "Projekt 1", "API", 7,
+  "Projekt 1", "R-Shiny", 7,
+  "Projekt 1", "Data Analysis", 7,
+  "Projekt 1", "Data Visualization", 7,
   
-  "ABM", "R", 7,
-  "ABM", "Simulation", 5,
-  "ABM", "Data Analysis", 6,
-  "ABM", "Data Visualization", 6,
-  "ABM", "R-Shiny", 6,
+  "Projekt 2", "R", 7,
+  "Projekt 2", "Simulation", 5,
+  "Projekt 2", "Data Analysis", 6,
+  "Projekt 2", "Data Visualization", 6,
+  "Projekt 2", "R-Shiny", 6,
   
-  "HighCon", "R", 8,
-  "HighCon", "Simulation", 7,
-  "HighCon", "Data Preprocessing", 7,
-  "HighCon", "Data Analysis", 7,
-  "HighCon", "Data Visualization", 6,
-  "HighCon", "Shell Scripting", 5,
+  "Projekt 3", "R", 8,
+  "Projekt 3", "Simulation", 7,
+  "Projekt 3", "Data Preprocessing", 7,
+  "Projekt 3", "Data Analysis", 7,
+  "Projekt 3", "Data Visualization", 6,
+  "Projekt 3", "Shell Scripting", 5,
   
-  "DataAnalytics", "R", 9,
-  "DataAnalytics", "R-Shiny", 7,
-  "DataAnalytics", "Data Preprocessing", 8,
-  "DataAnalytics", "Data Analysis", 8,
-  "DataAnalytics", "Data Visualization", 7,
+  "Projekt 4", "R", 9,
+  "Projekt 4", "R-Shiny", 7,
+  "Projekt 4", "Data Preprocessing", 8,
+  "Projekt 4", "Data Analysis", 8,
+  "Projekt 4", "Data Visualization", 7,
   
-  "LTDis", "R", 8,
-  "LTDis", "Simulation", 6,
-  "LTDis", "Data Preprocessing", 7,
-  "LTDis", "Data Analysis", 6,
-  "LTDis", "Data Visualization", 7,
-  "LTDis", "Reporting", 6,
+  "Projekt 5", "R", 8,
+  "Projekt 5", "Simulation", 6,
+  "Projekt 5", "Data Preprocessing", 7,
+  "Projekt 5", "Data Analysis", 6,
+  "Projekt 5", "Data Visualization", 7,
+  "Projekt 5", "Reporting", 6,
   
-  "Quarto", "R", 8,
-  "Quarto", "Python", 2,
-  "Quarto", "Git", 5,
-  "Quarto", "Reporting", 9,
-  "Quarto", "SQL", 2,
-  "Quarto", "CI/CD", 3,
-  "Quarto", "LaTeX", 7,
-  "Quarto", "typst", 3,
-  "Quarto", "Quarto", 9,
+  "Projekt 6", "R", 8,
+  "Projekt 6", "Python", 2,
+  "Projekt 6", "Git", 5,
+  "Projekt 6", "Reporting", 9,
+  "Projekt 6", "SQL", 2,
+  "Projekt 6", "CI/CD", 3,
+  "Projekt 6", "LaTeX", 7,
+  "Projekt 6", "typst", 3,
+  "Projekt 6", "Quarto", 9,
   
-  "Faulung", "R", 8,
-  "Faulung", "Reporting", 6,
-  "Faulung", "Data Preprocessing", 7,
-  "Faulung", "Data Analysis", 6,
-  "Faulung", "Data Visualization", 6,
-  "Faulung", "Git", 5,
+  "Projekt 7", "R", 8,
+  "Projekt 7", "WebScraping", 6,
+  "Projekt 7", "SQL", 3,
+  "Projekt 7", "Data Preprocessing", 6,
   
-  "Trocknung", "R", 8,
-  "Trocknung", "Data Preprocessing", 6,
-  "Trocknung", "Data Analysis", 6,
-  "Trocknung", "Data Visualization", 6,
-  "Trocknung", "Reporting", 5,
-  "Trocknung", "Git", 5,
+  "Projekt 8", "R", 8,
+  "Projekt 8", "Reporting", 6,
+  "Projekt 8", "Data Preprocessing", 7,
+  "Projekt 8", "Data Analysis", 6,
+  "Projekt 8", "Data Visualization", 6,
+  "Projekt 8", "Git", 5,
   
-  "Benchmark", "R", 8,
-  "Benchmark", "Data Preprocessing", 6,
-  "Benchmark", "Data Analysis", 6,
-  "Benchmark", "Data Visualization", 6,
-  "Benchmark", "Reporting", 4,
-  "Benchmark", "Git", 5,
+  "Projekt 9", "R", 8,
+  "Projekt 9", "Data Preprocessing", 6,
+  "Projekt 9", "Data Analysis", 6,
+  "Projekt 9", "Data Visualization", 6,
+  "Projekt 9", "Reporting", 5,
+  "Projekt 9", "Git", 5,
   
-  "TendeR", "R", 8,
-  "TendeR", "WebScraping", 6,
-  "TendeR", "SQL", 3,
-  "TendeR", "Data Preprocessing", 6,
+  "Projekt 10", "R", 8,
+  "Projekt 10", "Data Preprocessing", 6,
+  "Projekt 10", "Data Analysis", 6,
+  "Projekt 10", "Data Visualization", 6,
+  "Projekt 10", "Reporting", 4,
+  "Projekt 10", "Git", 5,
 )
 
 # left join end date to skills tibble
 skills <- left_join(skills, projects, by = "Project")
+```
 
-# order by StartDate
-skills <- skills %>% arrange(StartDate)
+::: {.content-visible when-format="html"}
+Die Selbsteinschätzung der IT-Skills wird mithilfe des Quarto-Frameworks erstellt. Der Quellcode wird über [GitHub](https://github.com/ChrisEnv/its) bereitgestellt.
+:::
 
-# Create heatmap
-fig <- ggplot(skills, aes(x = Project, y = Skill, fill = Usage)) +
+::: {.content-visible when-format="pdf"}
+Die Selbsteinschätzung der IT-Skills wird mithilfe des Quarto-Frameworks erstellt. Der Quellcode wird über GitHub bereitgestellt und über GitHub-Pages als interaktives HTML-Dokument veröffentlicht:
+
+- [interaktives HTML-Dokument](https://chrisenv.github.io/its/)
+- [GitHub Repository](https://github.com/ChrisEnv/its)
+:::
+
+# Bewertung der Programmierkenntnisse
+
+Die Bewertung der Programmierkenntnisse erfolgt anhand eines quantifizierbaren Ansatzes. Grundlage ist die Selbsteinschätzung der in Projekten angewandten Kenntnisse in verschiedenen Programmiersprachen, Frameworks und Tools. Die Bewertung erfolgt auf einer Skala von 1 bis 10, wobei 1 für Grundkenntnisse und 10 für Expertenkenntnisse steht. 
+
+Zusammenfassend wird in @fig-skills die Selbsteinschätzung der IT-Skills dargestellt.
+
+```{r}
+#| fig-cap: Selbsteinschätzung IT-Skills
+#| label: fig-skills
+
+# calculate recency factor for each skill
+skills <- skills %>%
+  mutate(Recency = map_dbl(EndDate, calc_recency_factor))
+
+# calculate recency skill
+skills <- skills %>% 
+  mutate(RecencySkill = Usage * Recency)
+
+# calculate hover text
+skills_radar <- skills %>%
+  group_by(Skill) %>%
+  summarise(Score = max(RecencySkill), nproject = n())
+
+
+# Erstellen des Radardiagramms
+fig <- plot_ly(
+  type = 'scatterpolar',
+  mode = "markers",
+  r = skills_radar$Score,
+  theta = skills_radar$Skill,
+  fill = 'toself',
+  fillcolor = hex_to_rgba(minimal_palette["light_blue"], alpha = 0.7),
+  hoverinfo = "text",  # Use custom hover info
+  text = paste("Level:", skills_radar$Score %>% round(1), "<br>n-Projekte:", skills_radar$nproject)  # Custom hover text
+)
+
+fig <- fig %>%
+  layout(
+    polar = list(
+      radialaxis = list(
+        visible = TRUE,
+        range = c(0, 10)
+      )
+    )
+  )
+
+fig
+```
+
+Die Selbsteinschätzung der IT-Skills zeigt, dass die Programmierkenntnisse in den Bereichen R, Data Preprocessing und Data Analysis am höchsten sind. Die Kenntnisse in Python, Git und SQL sind im mittleren Bereich. Die Kenntnisse in WebScraping, CI/CD und typst sind am niedrigsten.
+
+# Herangehensweise
+
+::: {.content-visible when-format="html"}
+
+Für die Bestimmung der IT-Skills wurden die letzten `r nrow(projects)` Projekte analysiert, welche sich über einen Zeitraum vom `r min(projects$StartDate) %>% format("%d.%m.%Y")` bis `r max(projects$EndDate) %>% format("%d.%m.%Y")` erstrecken. Jedem der anonymisierten Projekte wurden die verwendeten Skills und die Selbsteinschätzung der Kenntnisse zugeordnet. Die @fig-heatmap zeigt die Verteilung der Skills in den Projekten.
+
+```{r}
+#| fig-cap: Heatmap der Skills
+#| label: fig-heatmap
+
+skills <- rename(skills, Level = Usage)
+
+# Create heatmap with Plotly
+fig <- plot_ly(
+  data = skills, 
+  x = ~Project, 
+  y = ~Skill, 
+  z = ~Level, 
+  type = "heatmap",
+  colors = c(minimal_palette["light_blue"], minimal_palette["muted_blue"])
+) %>%
+  layout(
+    xaxis = list(title = ""),
+    yaxis = list(title = "")
+  )
+
+# Rotate x-axis labels
+fig <- fig %>% layout(
+  xaxis = list(tickangle = 45)
+)
+
+fig
+```
+:::
+
+::: {.content-visible when-format="pdf"}
+
+Für die Bestimmung der IT-Skills wurden die letzten `r nrow(projects)` Projekte analysiert, welche sich über einen Zeitraum vom `r min(projects$StartDate) %>% format("%d.%m.%Y")` bis `r max(projects$EndDate) %>% format("%d.%m.%Y")` erstrecken. Jedem der anonymisierten Projekte wurden die verwendeten Skills und die Selbsteinschätzung der Kenntnisse zugeordnet. Die @fig-heatmap2 zeigt die Verteilung der Skills in den Projekten.
+
+```{r}
+#| fig-cap: Heatmap der Skills
+#| label: fig-heatmap2
+#| fig-width: 8
+#| fig-height: 6
+
+# create heatmap showing skill usage in projects
+fig <- ggplot(skills, aes(x = Project, y = Skill, fill = Level)) +
   geom_tile() +
   labs(x = "", y = "") +
   # rename legend
   scale_fill_gradient(name = "Level", low = minimal_palette["light_blue"], high = minimal_palette["muted_blue"]) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-```{r}
-#| fig-cap: Heatmap der Skills
-#| label: fig-heatmap
 
 fig
 ```
+:::
 
-
-```{r}
-# Create Gantt chart
-fig <- ggplot(projects, aes(x = StartDate, xend = EndDate, y = Project, yend = Project)) +
-  geom_segment(linewidth = 5, color = minimal_palette["muted_blue"])+
-  labs(x = "", y = "") +
-  # add red line for today
-  geom_vline(xintercept = Sys.Date(), color = minimal_palette["light_orange"], linetype = "dashed")
-
-# add theme minimal
-fig <- fig + theme_minimal()
-```
-
-Anhand @fig-gantt wird der Zeitverlauf der Projekte dargestellt.
+Zur besseren Einordnung der Projekte und der verwendeten Skills wird in @fig-gantt ein Gantt-Diagramm erstellt.
 
 ```{r}
-#| fig-cap: Project Timeline Gantt Chart
+#| fig-cap: Gantt-Diagramm der Projekte
 #| label: fig-gantt
 
+# Initialize empty plot
+fig <- plot_ly()
+
+# Each project is a separate trace
+for(i in 1:nrow(projects)){
+  fig <- add_trace(fig,
+                   x = c(projects$StartDate[i], projects$EndDate[i]),  # x0, x1
+                   y = c(i, i),  # y0, y1
+                   mode = "lines",
+                   type = "scatter",
+                   line = list(color = minimal_palette["muted_blue"], width = 20),
+                   showlegend = FALSE,
+                   hoverinfo = "text",
+                   text = paste("Start Date: ", projects$StartDate[i], "<br>",
+                                "End Date: ", projects$EndDate[i])
+  )
+}
+
+# Add vertical line for today's date
+fig <- fig %>%
+  layout(
+    shapes = list(
+      list(
+        type = "line",
+        x0 = Sys.Date(),
+        x1 = Sys.Date(),
+        xref = "x",
+        y0 = 0,
+        y1 = 1,
+        yref = "paper",
+        line = list(color = minimal_palette["light_orange"], dash = "dash")
+      )
+    ),
+    xaxis = list(title = ""),
+    yaxis = list(title = "", tickvals = 1:nrow(projects), ticktext = projects$Project)
+  )
+
 fig
 ```
 
-Anhand des Enddatums der Projekte und der aktuellen Zeit wird ein Aktualitäts-Faktor der Fähigkeiten berechnet. Eine Fähigkeit, welche in den letzten 365 Tagen verwendet wurde, erhält den Faktor 1. Für jeden weiteren Tag, an dem der Skill nicht verwendet wurde, wird der Wert linear von 1 auf 0 reduziert.
+Anhand des Abschlussdatums der Projekte wird ein Recency-Faktor für die Skills berechnet. Der Recency-Faktor berücksichtigt die Abnahme der Kenntnisse über die Zeit. Der Faktor nimmt linear von 1 (Skill wurde in den letzten 365 Tagen angewendet) bis 0 (Skill wurde vor mehr als 10 Jahren angewendet) ab.
 
 ```{r}
-#| echo: true
-
 calc_recency_factor <- function(date){
   # calculate difference in days
   diff <- as.numeric(Sys.Date() - date)
@@ -198,46 +322,3 @@ calc_recency_factor <- function(date){
 }
 ```
 
-Zusammenfassend ergibt sich für jede Anwendung einer Fähigkeit ein zeitlich gewichteter Wert. Das Maximum jeder Fähigkeit wird als Skill-Level festgehalten und in @fig-skills dargestellt.
-
-```{r}
-# calculate recency factor for each skill
-skills <- skills %>%
-  mutate(Recency = map_dbl(EndDate, calc_recency_factor))
-
-# calculate recency skill
-skills <- skills %>% 
-  mutate(RecencySkill = Usage * Recency)
-
-# create radar chart based on skills tibble
-skills <- skills %>%
-  group_by(Skill) %>%
-  summarise(Score = max(RecencySkill))
-
-# Erstellen des Radardiagramms
-fig <- plot_ly(
-  type = 'scatterpolar',
-  mode = "markers",
-  r = skills$Score,
-  theta = skills$Skill,
-  fill = 'toself',
-  fillcolor = hex_to_rgba(minimal_palette["light_blue"], alpha = 0.7)
-)
-
-fig <- fig %>%
-  layout(
-    polar = list(
-      radialaxis = list(
-        visible = TRUE,
-        range = c(0, 10)
-      )
-    )
-  )
-```
-
-```{r}
-#| fig-cap: Selbsteinschätzung IT-Skills
-#| label: fig-skills
-
-fig
-```

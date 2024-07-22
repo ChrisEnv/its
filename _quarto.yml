@@ -8,4 +8,7 @@ format:
   memo-pdf:
     branding: false # true oder false
     lang: de
-  html: default
+  html:
+    theme: cosmo
+    css: styles.scss
+    echo: false

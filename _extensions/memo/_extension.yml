@@ -30,7 +30,7 @@ contributes:
           echo: false
           warning: false
           message: false
-          fig-width: 6
-          fig-height: 4
+          fig-width: 3
+          fig-height: 2
       template-partials:
         - before-title.tex
